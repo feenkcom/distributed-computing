@@ -6,9 +6,9 @@ Class {
 
 { #category : #baselines }
 BaselineOfDistributedProcessing >> baseline: spec [ 
+	<baseline>
 
 	spec for: #common do: [ 
-		<baseline>
 		spec blessing: #baseline.
 		
 		spec
