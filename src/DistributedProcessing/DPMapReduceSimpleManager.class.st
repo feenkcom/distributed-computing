@@ -267,18 +267,29 @@ DPMapReduceSimpleManager >> signalCompletion [
 ]
 
 { #category : #printing }
+DPMapReduceSimpleManager >> stateString [
+
+	^ processors ifNil: 
+		[ 'Idle' ]
+	ifNotNil: [ self isFinished ifFalse: 
+		[ 'Not Finished' ]
+	ifTrue: [ self isSuccess ifTrue:
+		[ 'Succeeded' ]
+	ifFalse:
+		[ 'Failed' ] ] ]
+]
+
+{ #category : #printing }
 DPMapReduceSimpleManager >> statusOn: aStream [
 	"Print a long form summary of the receiver on the supplied stream"
 
-	self isRunning ifTrue:
-		[ aStream << 'In Progress' ]
-	ifFalse: [ self isFinished ifTrue: 
+	aStream << self stateString; cr.
+	self isSuccess ifTrue: 
 		[ aStream 
 			<< 'Completed in ';
-			print: self elapsedTime ]
-	ifFalse:
-		[ aStream << 'Idle' ] ].
-	aStream cr; cr.
+			print: self elapsedTime;
+			cr ].
+	aStream cr.
 
 	aStream
 		<< 'Succeeded: ';

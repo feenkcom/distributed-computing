@@ -10,9 +10,14 @@ BaselineOfDistributedProcessing >> baseline: spec [
 
 	spec for: #common do: [ 
 		spec blessing: #baseline.
-		
+
 		spec
-			package: #'DistributedProcessing';
+			baseline: 'NeoCSV'
+			with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
+
+		spec
+			package: #'DistributedProcessing'
+				with: [ spec requires: #('NeoCSV') ];
 			group: 'Core' with: #(#'DistributedProcessing');
 			group: 'all' with: #(#Core);
 			group: 'default' with: #(#all).
