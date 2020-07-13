@@ -1,7 +1,7 @@
 "
-BatchLineReaderByPosition provides a stream like interface for reading part of a file, one line at a time.
+BatchLineReaderByPosition provides a stream like interface for reading part of a file, one character or line at a time.
 
-It avoids having to parse the file leading up to the desired lines by positioning the stream at the start index and reading until the next line end character.  Lines are then read from the file until the end index is passed.
+It avoids having to parse the file leading up to the desired lines by positioning the stream at the start index (byte offset) and reading until the next line end character (as a binary stream).  Lines are then read from the file (as a character stream) until the end index is passed.
 
 
 Public API and Key Messages
@@ -49,6 +49,7 @@ DPLineLimitedReadStream >> close [
 
 { #category : #enumerating }
 DPLineLimitedReadStream >> collect: aBlock [ 
+	"Evaluate aBlock with each line in the receiver's stream and answer the results"
 
 	self resetStreams.
 	^ Array streamContents: [ :stream |

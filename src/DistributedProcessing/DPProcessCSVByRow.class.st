@@ -24,6 +24,7 @@ See DPSumLargeCSVExample as an example concrete implementation.
 !!Internal Representation and Key Implementation Points.
 
 !!!Instance Variables
+
 	endIndex:			<Integer>
 	filename:			<FileReference>
 	firstRecord:		<Array>
@@ -35,11 +36,8 @@ See DPSumLargeCSVExample as an example concrete implementation.
 "
 Class {
 	#name : #DPProcessCSVByRow,
-	#superclass : #DPAbstractMapper,
+	#superclass : #DPProcessFileStream,
 	#instVars : [
-		'filename',
-		'startIndex',
-		'endIndex',
 		'firstRecord',
 		'lastRecord'
 	],
@@ -81,30 +79,9 @@ DPProcessCSVByRow >> csvReaderOn: readStream [
 	^ NeoCSVReader on: readStream
 ]
 
-{ #category : #accessing }
-DPProcessCSVByRow >> endIndex [
-	^ endIndex ifNil: [ filename size ]
-]
-
-{ #category : #accessing }
-DPProcessCSVByRow >> endIndex: anObject [
-	endIndex := anObject
-]
-
-{ #category : #accessing }
-DPProcessCSVByRow >> filename [
-	^ filename
-]
-
-{ #category : #accessing }
-DPProcessCSVByRow >> filename: anObject [
-
-	filename := anObject asFileReference
-]
-
 { #category : #operations }
 DPProcessCSVByRow >> map [ 
-	"Add all the numbers in the third column of the supplied csv file, using the encoding specified in the second column and answer the filename and sum"
+	"Open the receiver's stream and csv reader and call #mapRecord: for each record in the receiver's set of records"
 	| csvReader |
 
 	self readStreamDo: [ :readStream |
@@ -118,39 +95,14 @@ DPProcessCSVByRow >> map [
 
 { #category : #private }
 DPProcessCSVByRow >> mapRecord: csvRecord [
+	"mapRecord: is called once with each record of the receiver's file, as an Array of strings"
 
 	self subclassResponsibility 
 ]
 
 { #category : #private }
-DPProcessCSVByRow >> readStream [ 
-	"Answer a batchLineReaderByPosition configured for the receiver's portion of the file"
-
-	^ DPLineLimitedReadStream new 
-		filename: filename;
-		startIndex: self startIndex;
-		endIndex: self endIndex;
-		resetStreams.
-]
-
-{ #category : #enumerating }
-DPProcessCSVByRow >> readStreamDo: aBlock [ 
-
-	^ self readStream streamDo: aBlock
-]
-
-{ #category : #private }
-DPProcessCSVByRow >> result [ 
+DPProcessCSVByRow >> result [
+	"Answer the result of the mapping as a JSON serialisable object."
 
 	^ self subclassResponsibility
-]
-
-{ #category : #accessing }
-DPProcessCSVByRow >> startIndex [
-	^ startIndex ifNil: [ 0 ]
-]
-
-{ #category : #accessing }
-DPProcessCSVByRow >> startIndex: anObject [
-	startIndex := anObject
 ]
