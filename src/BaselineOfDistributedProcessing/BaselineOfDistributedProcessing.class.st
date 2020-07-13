@@ -8,6 +8,7 @@ Class {
 BaselineOfDistributedProcessing >> baseline: spec [ 
 
 	spec for: #common do: [ 
+		<baseline>
 		spec blessing: #baseline.
 		
 		spec
