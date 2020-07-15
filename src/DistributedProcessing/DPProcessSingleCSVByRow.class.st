@@ -5,7 +5,7 @@ Class {
 		'firstRecord',
 		'lastRecord'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #private }

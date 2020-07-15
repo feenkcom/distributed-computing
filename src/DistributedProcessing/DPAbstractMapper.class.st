@@ -18,7 +18,7 @@ Class {
 		'processorNumber',
 		'processorCount'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #operations }

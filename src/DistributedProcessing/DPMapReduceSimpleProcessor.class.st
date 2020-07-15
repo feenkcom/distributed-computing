@@ -29,7 +29,7 @@ Class {
 		'future',
 		'result'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #accessing }

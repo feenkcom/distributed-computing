@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'filename'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #operating }

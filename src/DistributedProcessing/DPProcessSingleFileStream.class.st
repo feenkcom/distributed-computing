@@ -35,7 +35,7 @@ Class {
 		'startIndex',
 		'endIndex'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #private }

@@ -62,7 +62,7 @@ Class {
 		'startTime',
 		'endTime'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #private }

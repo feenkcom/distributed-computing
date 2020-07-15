@@ -32,7 +32,7 @@ Class {
 		'characterStream',
 		'encoding'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #accessing }

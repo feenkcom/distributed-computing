@@ -28,7 +28,7 @@ Class {
 		'mappedValues',
 		'result'
 	],
-	#category : #'DistributedProcessing-Model'
+	#category : #'DistributedProcessing-MapReduce'
 }
 
 { #category : #enumerating }
