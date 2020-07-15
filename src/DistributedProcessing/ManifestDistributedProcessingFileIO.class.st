@@ -9,10 +9,10 @@ Class {
 
 { #category : #'code-critics' }
 ManifestDistributedProcessingFileIO class >> ruleRBToDoCollectRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#DPMapReduceSimpleManager #run #false)) #'2020-07-12T18:24:00.908861+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#DPTaskManager #run #false)) #'2020-07-12T18:24:00.908861+02:00') )
 ]
 
 { #category : #'code-critics' }
 ManifestDistributedProcessingFileIO class >> ruleRBToDoWithIncrementRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#DPMapReduceSimpleManager #run #false)) #'2020-07-12T18:24:09.398679+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#DPTaskManager #run #false)) #'2020-07-12T18:24:09.398679+02:00') )
 ]

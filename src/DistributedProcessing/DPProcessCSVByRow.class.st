@@ -36,12 +36,13 @@ See DPSumLargeCSVExample as an example concrete implementation.
 "
 Class {
 	#name : #DPProcessCSVByRow,
-	#superclass : #DPProcessSingleFileStream,
+	#superclass : #DPProcessFile,
 	#instVars : [
 		'firstRecord',
-		'lastRecord'
+		'lastRecord',
+		'resultFile'
 	],
-	#category : #'DistributedProcessing-MapReduce'
+	#category : #'DistributedProcessing-Model'
 }
 
 { #category : #private }
@@ -50,19 +51,14 @@ DPProcessCSVByRow >> csvReaderOn: readStream [
 	^ NeoCSVReader on: readStream
 ]
 
-{ #category : #operations }
-DPProcessCSVByRow >> map [ 
-	"Open the receiver's stream and csv reader and call #mapRecord: for each record in the receiver's set of records"
-	| csvReader |
+{ #category : #accessing }
+DPProcessCSVByRow >> firstRecord [
+	^ firstRecord
+]
 
-	self readStreamDo: [ :readStream |
-		csvReader := self csvReaderOn: readStream.
-		firstRecord := csvReader next.
-		(self parseHeader: firstRecord) ifFalse:
-			[ self mapRecord: firstRecord ].
-		[ csvReader atEnd ] whileFalse:
-			[ self mapRecord: csvReader next ] ].
-	^ self result.
+{ #category : #accessing }
+DPProcessCSVByRow >> lastRecord [
+	^ lastRecord
 ]
 
 { #category : #private }
@@ -80,9 +76,20 @@ DPProcessCSVByRow >> parseHeader: csvReader [
 	^ false
 ]
 
-{ #category : #private }
-DPProcessCSVByRow >> result [
-	"Answer the result of the mapping as a JSON serialisable object."
+{ #category : #operations }
+DPProcessCSVByRow >> runTask [
+	"Open the receiver's stream and csv reader and call #mapRecord: for each record in the receiver's set of records"
+	| csvReader |
 
-	^ self subclassResponsibility
+	fileSpec
+		taskIndex: taskIndex;
+		taskCount: taskCount.
+	fileSpec readStreamDo: [ :readStream |
+		csvReader := self csvReaderOn: readStream.
+		firstRecord := csvReader next.
+		(self parseHeader: firstRecord) ifFalse:
+			[ self mapRecord: firstRecord ].
+		[ csvReader atEnd ] whileFalse:
+			[ self mapRecord: csvReader next ] ].
+
 ]

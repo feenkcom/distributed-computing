@@ -19,7 +19,7 @@ DPMapReduceSimpleProcessor is responsible for starting and stopping a PharoLinkA
 !!!Implementation Points
 "
 Class {
-	#name : #DPMapReduceSimpleProcessor,
+	#name : #DPTaskProcessor,
 	#superclass : #Object,
 	#instVars : [
 		'host',
@@ -29,26 +29,26 @@ Class {
 		'future',
 		'result'
 	],
-	#category : #'DistributedProcessing-MapReduce'
+	#category : #'DistributedProcessing-Model'
 }
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> command [
+DPTaskProcessor >> command [
 	^ command
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> command: anObject [
+DPTaskProcessor >> command: anObject [
 	command := anObject
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> future [
+DPTaskProcessor >> future [
 	^ future
 ]
 
 { #category : #ui }
-DPMapReduceSimpleProcessor >> gtStatusFor: aView [
+DPTaskProcessor >> gtStatusFor: aView [
 	<gtView>
 
 	^ aView textEditor 
@@ -59,40 +59,40 @@ DPMapReduceSimpleProcessor >> gtStatusFor: aView [
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> host [
+DPTaskProcessor >> host [
 
 	^ host ifNil: [ host := 'localhost' ]
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> host: anObject [
+DPTaskProcessor >> host: anObject [
 	host := anObject
 ]
 
 { #category : #testing }
-DPMapReduceSimpleProcessor >> isFinished [ 
+DPTaskProcessor >> isFinished [ 
 
 	^ future isFinished
 ]
 
 { #category : #testing }
-DPMapReduceSimpleProcessor >> isSuccess [
+DPTaskProcessor >> isSuccess [
 
 	^ future isSuccess
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> portNumber [
+DPTaskProcessor >> portNumber [
 	^ portNumber
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> portNumber: anObject [
+DPTaskProcessor >> portNumber: anObject [
 	portNumber := anObject
 ]
 
 { #category : #printing }
-DPMapReduceSimpleProcessor >> printOn: aStream [
+DPTaskProcessor >> printOn: aStream [
 
 	super printOn: aStream.
 	aStream
@@ -102,23 +102,24 @@ DPMapReduceSimpleProcessor >> printOn: aStream [
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> result [
+DPTaskProcessor >> result [
 	^ result
 ]
 
 { #category : #executing }
-DPMapReduceSimpleProcessor >> runIn: anExecutionManager [
+DPTaskProcessor >> runIn: anExecutionManager [
 	"Schedule execution of the receiver in the supplied execution manager and set up handling of the future"
 
 	future := anExecutionManager runner future: (TKTTask valuable: self).
 	future onSuccessDo: [ :value |
-		anExecutionManager reduceFutures ].
-	future onFailureDo: [ :error | ].
+		anExecutionManager noteProcessCompletion ].
+	future onFailureDo: [ :value |
+		anExecutionManager noteProcessCompletion ].
 
 ]
 
 { #category : #printing }
-DPMapReduceSimpleProcessor >> stateString [
+DPTaskProcessor >> stateString [
 
 	^ self isFinished ifFalse: 
 		[ 'Not Finished' ]
@@ -129,7 +130,7 @@ DPMapReduceSimpleProcessor >> stateString [
 ]
 
 { #category : #printing }
-DPMapReduceSimpleProcessor >> statusOn: aStream [
+DPTaskProcessor >> statusOn: aStream [
 
 	aStream
 		<< 'Status: ';
@@ -148,19 +149,19 @@ DPMapReduceSimpleProcessor >> statusOn: aStream [
 ]
 
 { #category : #printing }
-DPMapReduceSimpleProcessor >> statusString [ 
+DPTaskProcessor >> statusString [ 
 
 	^ String streamContents: [ :s | self statusOn: s ]
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleProcessor >> stop [ 
+DPTaskProcessor >> stop [ 
 
 	application stop
 ]
 
 { #category : #evaluating }
-DPMapReduceSimpleProcessor >> value [ 
+DPTaskProcessor >> value [ 
 	| settings haveError |
 
 	settings := LanguageLinkSettings pharoDefaultSettings.

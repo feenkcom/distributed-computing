@@ -45,66 +45,54 @@ mgr
 !!!Implementation Points
 "
 Class {
-	#name : #DPMapReduceSimpleManager,
+	#name : #DPTaskManager,
 	#superclass : #Object,
 	#instVars : [
 		'processorCount',
 		'processors',
 		'basePortNumber',
-		'file',
-		'processorClass',
-		'reducerClass',
-		'resultPrefix',
-		'destinationDirectory',
+		'taskSpec',
 		'runner',
 		'completionSemaphore',
 		'result',
 		'startTime',
 		'endTime'
 	],
-	#category : #'DistributedProcessing-MapReduce'
+	#category : #'DistributedProcessing-Model'
 }
 
+{ #category : #configuration }
+DPTaskManager >> basePortNumber [
+	^ basePortNumber
+]
+
+{ #category : #configuration }
+DPTaskManager >> basePortNumber: anObject [
+	basePortNumber := anObject
+]
+
 { #category : #private }
-DPMapReduceSimpleManager >> commandFor: processorNumber of: count [
+DPTaskManager >> commandFor: processorNumber of: count [
 
 	^ String streamContents: [ :stream |
 		stream
-			<< processorClass name;
-			<< ' map: ';
-			print: file fullName;
-			<< ' processor: ';
+			<< '(';
+			<< taskSpec;
+			<< ') taskIndex: ';
 			print: processorNumber;
-			<< ' of: ';
-			print: count.
-		resultPrefix ifNotNil: 
-			[ stream 
-				<< ' to: ';
-				print: resultPrefix ].
-		destinationDirectory ifNotNil: 
-			[ stream 
-				<< ' in: ';
-				print: destinationDirectory asFileReference fullName ] ].
+			<< '; taskCount: ';
+			print: count;
+			<< '; run.' ].
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleManager >> destinationDirectory [
-	^ destinationDirectory
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> destinationDirectory: anObject [
-	destinationDirectory := anObject
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> elapsedTime [ 
+DPTaskManager >> elapsedTime [ 
 
 	^ endTime - startTime
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleManager >> failedCount [
+DPTaskManager >> failedCount [
 	"Answer the number of processors that have completed unsuccessfully"
 
 	processors ifNil: [ ^ 0 ].
@@ -112,19 +100,8 @@ DPMapReduceSimpleManager >> failedCount [
 	^ processors count: [ :processor | processor isFinished and: [ processor isSuccess not ] ]
 ]
 
-{ #category : #accessing }
-DPMapReduceSimpleManager >> file [
-	^ file
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> file: aFileReference [
-
-	file := aFileReference asFileReference 
-]
-
 { #category : #ui }
-DPMapReduceSimpleManager >> gtStatusFor: aView [
+DPTaskManager >> gtStatusFor: aView [
 	<gtView>
 
 	^ aView textEditor 
@@ -135,7 +112,7 @@ DPMapReduceSimpleManager >> gtStatusFor: aView [
 ]
 
 { #category : #initialization }
-DPMapReduceSimpleManager >> initialize [
+DPTaskManager >> initialize [
 
 	super initialize.
 	runner := TKTNewProcessTaskRunner new.
@@ -144,25 +121,37 @@ DPMapReduceSimpleManager >> initialize [
 ]
 
 { #category : #testing }
-DPMapReduceSimpleManager >> isFinished [ 
+DPTaskManager >> isFinished [ 
 
 	^ processors isNotNil and: [ processors allSatisfy: #isFinished ]
 ]
 
 { #category : #testing }
-DPMapReduceSimpleManager >> isRunning [ 
+DPTaskManager >> isRunning [ 
 
 	^ processors isNotNil and: [ self isFinished not ]
 ]
 
 { #category : #testing }
-DPMapReduceSimpleManager >> isSuccess [
+DPTaskManager >> isSuccess [
 
 	^ processors isNotNil and: [ processors allSatisfy: #isSuccess ]
 ]
 
+{ #category : #private }
+DPTaskManager >> noteProcessCompletion [
+	"This is called each time one of the processors completes.
+	Check that all have completed and if so signal completion."
+
+	(processors allSatisfy: [ :processor | processor isFinished ]) ifFalse:
+		[ ^ self ].
+	
+	self signalCompletion.
+
+]
+
 { #category : #printing }
-DPMapReduceSimpleManager >> printFailedOn: aStream [
+DPTaskManager >> printFailedOn: aStream [
 
 	self failedCount = 0 ifTrue: [ ^ self ].
 
@@ -174,14 +163,10 @@ DPMapReduceSimpleManager >> printFailedOn: aStream [
 ]
 
 { #category : #printing }
-DPMapReduceSimpleManager >> printOn: aStream [
+DPTaskManager >> printOn: aStream [
 
 	aStream
-		<< 'Simple Map/Reduce(';
-		print: processorClass;
-		<< ', ';
-		print: reducerClass;
-		<< ', '.
+		<< 'Task Manager ('.
 	self isFinished ifTrue: 
 		[ self isSuccess ifTrue: 
 			[ aStream << 'success' ]
@@ -192,72 +177,24 @@ DPMapReduceSimpleManager >> printOn: aStream [
 			[ aStream << 'not started' ]
 		ifNotNil:
 			[ aStream << 'in progress' ] ].
-	aStream << ')'
+	aStream
+		<< ') for: ';
+		<< (taskSpec ifNil: [ '<none>' ]).
+
 ]
 
-{ #category : #accessing }
-DPMapReduceSimpleManager >> processorClass [
-	^ processorClass
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> processorClass: anObject [
-	processorClass := anObject
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> processorCount [
+{ #category : #configuration }
+DPTaskManager >> processorCount [
 	^ processorCount
 ]
 
-{ #category : #accessing }
-DPMapReduceSimpleManager >> processorCount: anObject [
+{ #category : #configuration }
+DPTaskManager >> processorCount: anObject [
 	processorCount := anObject
 ]
 
-{ #category : #private }
-DPMapReduceSimpleManager >> reduceFutures [
-	"This is called each time one of the processors completes.
-	Check that all have completed and if so signal completion."
-
-	(processors allSatisfy: [ :processor | processor isFinished ]) ifFalse:
-		[ ^ self ].
-	
-	(processors allSatisfy: [ :processor | processor isSuccess ]) ifFalse:
-		[ ^ self signalCompletion ].
-
-	result := reducerClass reduce: (processors collect: #result).
-	self signalCompletion.
-
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> reducerClass [
-	^ reducerClass
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> reducerClass: anObject [
-	reducerClass := anObject
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> result [
-	^ result
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> resultPrefix [
-	^ resultPrefix
-]
-
-{ #category : #accessing }
-DPMapReduceSimpleManager >> resultPrefix: anObject [
-	resultPrefix := anObject
-]
-
 { #category : #running }
-DPMapReduceSimpleManager >> run [ 
+DPTaskManager >> run [ 
 	| processor portNumber |
 
 	startTime := DateAndTime now.
@@ -267,7 +204,7 @@ DPMapReduceSimpleManager >> run [
 	processors := Array new: processorCount.
 	portNumber := basePortNumber.
 	1 to: processorCount do: [ :i |
-		processor := DPMapReduceSimpleProcessor new 
+		processor := DPTaskProcessor new 
 			portNumber: portNumber;
 			command: (self commandFor: i of: processorCount).
 		processor runIn: self.
@@ -277,27 +214,27 @@ DPMapReduceSimpleManager >> run [
 ]
 
 { #category : #private }
-DPMapReduceSimpleManager >> runInImage [
+DPTaskManager >> runInImage [
 
-	result := reducerClass reduce: { self class compiler evaluate: (self commandFor: 1 of: 1) }.
+	self class compiler evaluate: (self commandFor: 1 of: 1).
 	self signalCompletion.
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleManager >> runner [ 
+DPTaskManager >> runner [ 
 
 	^ runner
 ]
 
 { #category : #private }
-DPMapReduceSimpleManager >> signalCompletion [
+DPTaskManager >> signalCompletion [
 
 	endTime := DateAndTime now.
 	completionSemaphore signal.
 ]
 
 { #category : #printing }
-DPMapReduceSimpleManager >> stateString [
+DPTaskManager >> stateString [
 
 	^ processors ifNil: 
 		[ 'Idle' ]
@@ -310,7 +247,7 @@ DPMapReduceSimpleManager >> stateString [
 ]
 
 { #category : #printing }
-DPMapReduceSimpleManager >> statusOn: aStream [
+DPTaskManager >> statusOn: aStream [
 	"Print a long form summary of the receiver on the supplied stream"
 
 	aStream << self stateString; cr.
@@ -318,7 +255,8 @@ DPMapReduceSimpleManager >> statusOn: aStream [
 		[ aStream 
 			<< 'Completed in ';
 			print: self elapsedTime;
-			cr ].
+			cr.
+		^ self ].
 	aStream cr.
 
 	aStream
@@ -330,19 +268,16 @@ DPMapReduceSimpleManager >> statusOn: aStream [
 	self failedCount > 0 ifTrue:
 		[ self printFailedOn: aStream ].
 
-	self isSuccess ifTrue: 
-		[ aStream << 'Result:'; cr; cr.
-		aStream print: self result ]
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleManager >> statusString [ 
+DPTaskManager >> statusString [ 
 
 	^ String streamContents: [ :s | self statusOn: s ]
 ]
 
 { #category : #accessing }
-DPMapReduceSimpleManager >> succeededCount [
+DPTaskManager >> succeededCount [
 	"Answer the number of processors that have completed successfully"
 
 	processors ifNil: [ ^ 0 ].
@@ -350,8 +285,18 @@ DPMapReduceSimpleManager >> succeededCount [
 	^ processors count: [ :processor | processor isFinished and: [ processor isSuccess ] ]
 ]
 
+{ #category : #configuration }
+DPTaskManager >> taskSpec [
+	^ taskSpec
+]
+
+{ #category : #configuration }
+DPTaskManager >> taskSpec: anObject [
+	taskSpec := anObject
+]
+
 { #category : #running }
-DPMapReduceSimpleManager >> waitForCompletion [ 
+DPTaskManager >> waitForCompletion [ 
 
 	completionSemaphore wait.
 ]
