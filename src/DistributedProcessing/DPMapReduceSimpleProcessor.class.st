@@ -153,6 +153,12 @@ DPMapReduceSimpleProcessor >> statusString [
 	^ String streamContents: [ :s | self statusOn: s ]
 ]
 
+{ #category : #accessing }
+DPMapReduceSimpleProcessor >> stop [ 
+
+	application stop
+]
+
 { #category : #evaluating }
 DPMapReduceSimpleProcessor >> value [ 
 	| settings haveError |

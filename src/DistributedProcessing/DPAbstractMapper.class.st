@@ -14,6 +14,10 @@ See DPSumLargeCSVExample as an example.
 Class {
 	#name : #DPAbstractMapper,
 	#superclass : #Object,
+	#instVars : [
+		'processorNumber',
+		'processorCount'
+	],
 	#category : #'DistributedProcessing-Model'
 }
 
@@ -44,4 +48,24 @@ DPAbstractMapper >> mapToSton [
 	Override to provide results as other objects."
 
 	^ self map
+]
+
+{ #category : #accessing }
+DPAbstractMapper >> processorCount [
+	^ processorCount
+]
+
+{ #category : #accessing }
+DPAbstractMapper >> processorCount: anObject [
+	processorCount := anObject
+]
+
+{ #category : #accessing }
+DPAbstractMapper >> processorNumber [
+	^ processorNumber
+]
+
+{ #category : #accessing }
+DPAbstractMapper >> processorNumber: anObject [
+	processorNumber := anObject
 ]

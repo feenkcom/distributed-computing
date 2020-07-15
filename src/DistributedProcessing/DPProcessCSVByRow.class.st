@@ -36,42 +36,13 @@ See DPSumLargeCSVExample as an example concrete implementation.
 "
 Class {
 	#name : #DPProcessCSVByRow,
-	#superclass : #DPProcessFileStream,
+	#superclass : #DPProcessSingleFileStream,
 	#instVars : [
 		'firstRecord',
 		'lastRecord'
 	],
 	#category : #'DistributedProcessing-Model'
 }
-
-{ #category : #private }
-DPProcessCSVByRow class >> indexesFor: filename processor: processorNumber of: numberOfProcessors [
-	| dataFileSize startIndex endIndex |
-
-	dataFileSize := filename asFileReference size.
-	processorNumber = 1 ifTrue: 
-		[ startIndex := 0.
-		endIndex := (dataFileSize / numberOfProcessors) rounded ]
-	ifFalse: [ processorNumber = numberOfProcessors ifTrue: 
-		[ startIndex := (dataFileSize * (numberOfProcessors - 1) / numberOfProcessors) rounded.
-		endIndex := dataFileSize. ]
-	ifFalse: 
-		[ startIndex := (dataFileSize * (processorNumber - 1) / numberOfProcessors) rounded.
-		endIndex := (dataFileSize * processorNumber / numberOfProcessors) rounded. ] ].
-	^ { startIndex. endIndex. }
-]
-
-{ #category : #operating }
-DPProcessCSVByRow class >> map: filename processor: processorNumber of: numberOfProcessors [
-	| indexes |
-
-	indexes := self indexesFor: filename processor: processorNumber of: numberOfProcessors.
-	^ self new 
-		filename: filename;
-		startIndex: indexes first;
-		endIndex: indexes second;
-		map
-]
 
 { #category : #private }
 DPProcessCSVByRow >> csvReaderOn: readStream [
@@ -87,7 +58,8 @@ DPProcessCSVByRow >> map [
 	self readStreamDo: [ :readStream |
 		csvReader := self csvReaderOn: readStream.
 		firstRecord := csvReader next.
-		self mapRecord: firstRecord.
+		(self parseHeader: firstRecord) ifFalse:
+			[ self mapRecord: firstRecord ].
 		[ csvReader atEnd ] whileFalse:
 			[ self mapRecord: csvReader next ] ].
 	^ self result.
@@ -98,6 +70,14 @@ DPProcessCSVByRow >> mapRecord: csvRecord [
 	"mapRecord: is called once with each record of the receiver's file, as an Array of strings"
 
 	self subclassResponsibility 
+]
+
+{ #category : #parsing }
+DPProcessCSVByRow >> parseHeader: csvReader [
+	"Process the header file if necessary.
+	Answer a boolean indicating whether this really was a header row."
+
+	^ false
 ]
 
 { #category : #private }

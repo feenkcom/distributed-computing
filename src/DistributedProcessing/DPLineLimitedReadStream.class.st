@@ -29,7 +29,8 @@ Class {
 		'startIndex',
 		'endIndex',
 		'binaryStream',
-		'characterStream'
+		'characterStream',
+		'encoding'
 	],
 	#category : #'DistributedProcessing-Model'
 }
@@ -58,6 +59,16 @@ DPLineLimitedReadStream >> collect: aBlock [
 ]
 
 { #category : #accessing }
+DPLineLimitedReadStream >> encoding [
+	^ encoding
+]
+
+{ #category : #accessing }
+DPLineLimitedReadStream >> encoding: anObject [
+	encoding := anObject
+]
+
+{ #category : #accessing }
 DPLineLimitedReadStream >> endIndex [
 	^ endIndex
 ]
@@ -79,6 +90,13 @@ DPLineLimitedReadStream >> filename: aFileReference [
 
 ]
 
+{ #category : #initialization }
+DPLineLimitedReadStream >> initialize [ 
+
+	super initialize.
+	encoding := 'utf8'.
+]
+
 { #category : #accessing }
 DPLineLimitedReadStream >> next [
 
@@ -89,6 +107,14 @@ DPLineLimitedReadStream >> next [
 DPLineLimitedReadStream >> nextLine [ 
 
 	^ characterStream nextLine
+]
+
+{ #category : #accessing }
+DPLineLimitedReadStream >> position [ 
+	"Answer the position of the binary read stream.
+	startIndex and endIndex are relative to the binary stream."
+
+	^ binaryStream position
 ]
 
 { #category : #initialization }
@@ -106,7 +132,7 @@ DPLineLimitedReadStream >> resetStreams [
 		[ [ ch := binaryStream next.
 		ch = 13 or: [ ch = 10 ] ] whileFalse.
 		ch = 13 ifTrue: [ binaryStream peekFor: 10 ] ].
-	characterStream := ZnCharacterReadStream on: binaryStream.
+	characterStream := ZnCharacterReadStream on: binaryStream encoding: encoding.
 
 ]
 

@@ -54,6 +54,8 @@ Class {
 		'file',
 		'processorClass',
 		'reducerClass',
+		'resultPrefix',
+		'destinationDirectory',
 		'runner',
 		'completionSemaphore',
 		'result',
@@ -74,7 +76,25 @@ DPMapReduceSimpleManager >> commandFor: processorNumber of: count [
 			<< ' processor: ';
 			print: processorNumber;
 			<< ' of: ';
-			print: count ]
+			print: count.
+		resultPrefix ifNotNil: 
+			[ stream 
+				<< ' to: ';
+				print: resultPrefix ].
+		destinationDirectory ifNotNil: 
+			[ stream 
+				<< ' in: ';
+				print: destinationDirectory asFileReference fullName ] ].
+]
+
+{ #category : #accessing }
+DPMapReduceSimpleManager >> destinationDirectory [
+	^ destinationDirectory
+]
+
+{ #category : #accessing }
+DPMapReduceSimpleManager >> destinationDirectory: anObject [
+	destinationDirectory := anObject
 ]
 
 { #category : #accessing }
@@ -224,6 +244,16 @@ DPMapReduceSimpleManager >> reducerClass: anObject [
 { #category : #accessing }
 DPMapReduceSimpleManager >> result [
 	^ result
+]
+
+{ #category : #accessing }
+DPMapReduceSimpleManager >> resultPrefix [
+	^ resultPrefix
+]
+
+{ #category : #accessing }
+DPMapReduceSimpleManager >> resultPrefix: anObject [
+	resultPrefix := anObject
 ]
 
 { #category : #running }

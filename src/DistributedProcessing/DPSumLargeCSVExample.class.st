@@ -6,7 +6,7 @@ See DPLargeCSVExample for the record format and how to run the example.  The val
 "
 Class {
 	#name : #DPSumLargeCSVExample,
-	#superclass : #DPProcessCSVByRow,
+	#superclass : #DPProcessSingleCSVByRow,
 	#instVars : [
 		'total',
 		'lineNumber'
