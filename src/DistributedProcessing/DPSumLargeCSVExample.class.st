@@ -6,7 +6,7 @@ See DPLargeCSVExample for the record format and how to run the example.  The val
 "
 Class {
 	#name : #DPSumLargeCSVExample,
-	#superclass : #DPProcessSingleCSVByRow,
+	#superclass : #DPProcessCSVByRow,
 	#instVars : [
 		'total',
 		'lineNumber'
@@ -40,5 +40,5 @@ DPSumLargeCSVExample >> mapRecord: csvRecord [
 { #category : #operations }
 DPSumLargeCSVExample >> result [
 
-	^ { filename basename. total. firstRecord. lastRecord. }
+	^ { fileSpec basename. total. firstRecord. lastRecord. }
 ]

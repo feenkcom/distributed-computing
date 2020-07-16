@@ -26,7 +26,8 @@ mgr := DPMapReduceSimpleManager new
 	processorClass: DPSumLargeCSVExample;
 	reducerClass: DPReduceLargeCSVExample;
 	processorCount: 8;
-	file: file;
+	fileSpec: (DPInputFileWithRangeSpec new
+		filename: file);
 	run.
 ]]]
 

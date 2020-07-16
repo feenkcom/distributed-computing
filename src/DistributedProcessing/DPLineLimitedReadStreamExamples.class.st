@@ -1,3 +1,6 @@
+"
+Demonstrate and test DPLineLimitedReadStream.
+"
 Class {
 	#name : #DPLineLimitedReadStreamExamples,
 	#superclass : #Object,

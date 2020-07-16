@@ -10,6 +10,12 @@ Class {
 }
 
 { #category : #accessing }
+DPInputFileSpec >> basename [ 
+
+	^ self filename basename
+]
+
+{ #category : #accessing }
 DPInputFileSpec >> encoding [
 
 	^ encoding ifNil: [ 'utf8' ]
@@ -18,6 +24,12 @@ DPInputFileSpec >> encoding [
 { #category : #accessing }
 DPInputFileSpec >> encoding: anObject [
 	encoding := anObject
+]
+
+{ #category : #accessing }
+DPInputFileSpec >> filename [
+
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }

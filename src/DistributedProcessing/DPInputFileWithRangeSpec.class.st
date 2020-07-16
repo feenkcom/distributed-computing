@@ -11,7 +11,8 @@ Class {
 
 { #category : #accessing }
 DPInputFileWithRangeSpec >> endIndex [
-	^ endIndex
+
+	^ endIndex ifNil: [ self getIndexFromTask. endIndex ]
 ]
 
 { #category : #accessing }
@@ -30,6 +31,24 @@ DPInputFileWithRangeSpec >> filename: aFileReference [
 	filename := aFileReference asFileReference 
 ]
 
+{ #category : #private }
+DPInputFileWithRangeSpec >> getIndexFromTask [
+	"Set the startIndex and endIndex based on the file size, taskIndex and taskCount"
+	| dataFileSize |
+
+	dataFileSize := self filename size.
+	taskIndex = 1 ifTrue: 
+		[ startIndex := 0.
+		endIndex := (dataFileSize / taskCount) rounded ]
+	ifFalse: [ taskIndex = taskCount ifTrue: 
+		[ startIndex := (dataFileSize * (taskCount - 1) / taskCount) rounded.
+		endIndex := dataFileSize. ]
+	ifFalse: 
+		[ startIndex := (dataFileSize * (taskIndex - 1) / taskCount) rounded.
+		endIndex := (dataFileSize * taskIndex / taskCount) rounded. ] ].
+
+]
+
 { #category : #accessing }
 DPInputFileWithRangeSpec >> readStream [ 
 	"Answer a batchLineReaderByPosition configured for the receiver's portion of the file"
@@ -44,7 +63,8 @@ DPInputFileWithRangeSpec >> readStream [
 
 { #category : #accessing }
 DPInputFileWithRangeSpec >> startIndex [
-	^ startIndex
+
+	^ startIndex ifNil: [ self getIndexFromTask. startIndex ]
 ]
 
 { #category : #accessing }
