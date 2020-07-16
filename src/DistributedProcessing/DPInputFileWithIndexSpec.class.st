@@ -30,6 +30,20 @@ DPInputFileWithIndexSpec >> prefix: anObject [
 	prefix := anObject
 ]
 
+{ #category : #printing }
+DPInputFileWithIndexSpec >> printOn: aStream [
+
+	super printOn: aStream.
+	aStream
+		<< '(';
+		<< (prefix ifNil: [ '<Unknown>' ]);
+		<< '.';
+		print: taskIndex;
+		<< '.';
+		<< (suffix ifNil: [ '<Unknown>' ]);
+		<< ')'
+]
+
 { #category : #accessing }
 DPInputFileWithIndexSpec >> readStream [ 
 

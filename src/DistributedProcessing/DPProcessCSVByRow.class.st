@@ -40,7 +40,8 @@ Class {
 	#instVars : [
 		'firstRecord',
 		'lastRecord',
-		'resultFile'
+		'resultFile',
+		'recordCount'
 	],
 	#category : #'DistributedProcessing-Model'
 }
@@ -54,6 +55,13 @@ DPProcessCSVByRow >> csvReaderOn: readStream [
 { #category : #accessing }
 DPProcessCSVByRow >> firstRecord [
 	^ firstRecord
+]
+
+{ #category : #initialization }
+DPProcessCSVByRow >> initialize [
+
+	super initialize.
+	recordCount := 0.
 ]
 
 { #category : #accessing }
@@ -88,8 +96,10 @@ DPProcessCSVByRow >> runTask [
 		csvReader := self csvReaderOn: readStream.
 		firstRecord := csvReader next.
 		(self parseHeader: firstRecord) ifFalse:
-			[ self mapRecord: firstRecord ].
+			[ self mapRecord: firstRecord.
+			recordCount := recordCount + 1 ].
 		[ csvReader atEnd ] whileFalse:
-			[ self mapRecord: csvReader next ] ].
+			[ self mapRecord: csvReader next.
+			recordCount := recordCount + 1 ] ].
 
 ]
