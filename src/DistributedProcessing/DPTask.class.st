@@ -49,7 +49,7 @@ DPTask >> resultPrefix: anObject [
 { #category : #configuration }
 DPTask >> resultSuffix [
 
-	^ resultSuffix ifNil: [ 'ston' ]
+	^ resultSuffix ifNil: [ 'fuel' ]
 ]
 
 { #category : #configuration }
@@ -64,8 +64,7 @@ DPTask >> run [
 	^ self resultFile ifNil:
 		[ self result ]
 	ifNotNil: [ :resultFile |
-		resultFile writeStreamDo: [ :stream |
-			STON put: self result onStreamPretty: stream ].
+		self serializeToFileNamed: resultFile.
 		nil ].
 ]
 
@@ -83,6 +82,20 @@ DPTask >> runImmediateSingleTask [
 DPTask >> runTask [
 
 	^ self subclassResponsibility 
+]
+
+{ #category : #private }
+DPTask >> serializeToFileNamed: aFileReference [
+	| fileReference |
+
+	fileReference := aFileReference asFileReference.
+	fileReference extension = #fuel ifTrue: 
+		[ ^ FLSerializer serialize: self result toFileNamed: fileReference fullName ]
+	ifFalse: [ fileReference extension = #ston ifTrue: 
+		[ ^ fileReference writeStreamDo: [ :stream |
+			STON put: self result onStreamPretty: stream ]. ] ].
+
+	self error: 'Unknown file format: ', fileReference extension printString.
 ]
 
 { #category : #accessing }
