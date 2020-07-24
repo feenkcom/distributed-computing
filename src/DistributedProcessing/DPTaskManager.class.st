@@ -115,7 +115,9 @@ DPTaskManager >> gtStatusFor: aView [
 DPTaskManager >> initialize [
 
 	super initialize.
-	runner := TKTNewProcessTaskRunner new.
+	runner := TKTCommonQueueWorkerPool new.
+	runner poolMaxSize: 2.
+	runner start.
 	completionSemaphore := Semaphore new.
 	basePortNumber := 13000.
 ]

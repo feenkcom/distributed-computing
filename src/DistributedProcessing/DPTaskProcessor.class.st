@@ -168,7 +168,8 @@ DPTaskProcessor >> value [
 	settings 
 		debugMode: true;
 		clientSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber);
-		serverSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber + 1000).
+		serverSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber + 1000);
+		serverImage: 'ExtnDictionary.image' asFileReference.
 	application := PharoLinkApplication newWith: settings.
 	application start.
 	haveError := false.
