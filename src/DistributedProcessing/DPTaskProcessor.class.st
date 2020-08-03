@@ -83,7 +83,7 @@ DPTaskProcessor >> image: anObject [
 { #category : #testing }
 DPTaskProcessor >> isFinished [ 
 
-	^ future isFinished
+	^ future isNotNil and: [ future isFinished ]
 ]
 
 { #category : #testing }
@@ -179,8 +179,8 @@ DPTaskProcessor >> value [
 	settings 
 		debugMode: true;
 		clientSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber);
-		serverSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber + 1000);
-		serverImage: image.
+		serverSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber + 1000).
+	image ifNotNil: [ settings serverImage: image ].
 	application := PharoLinkApplication newWith: settings.
 	application start.
 	haveError := false.

@@ -127,7 +127,7 @@ DPTaskManager >> initialize [
 { #category : #testing }
 DPTaskManager >> isFinished [ 
 
-	^ processors isNotNil and: [ processors allSatisfy: #isFinished ]
+	^ processors isNotNil and: [ processors allSatisfy: [ :p | p isNotNil and: [ p isFinished ] ] ]
 ]
 
 { #category : #testing }
