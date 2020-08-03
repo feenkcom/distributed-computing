@@ -56,7 +56,8 @@ Class {
 		'completionSemaphore',
 		'result',
 		'startTime',
-		'endTime'
+		'endTime',
+		'maxConcurrentProcesses'
 	],
 	#category : #'DistributedProcessing-Model'
 }
@@ -115,8 +116,9 @@ DPTaskManager >> gtStatusFor: aView [
 DPTaskManager >> initialize [
 
 	super initialize.
+	maxConcurrentProcesses := 8.
 	runner := TKTCommonQueueWorkerPool new.
-	runner poolMaxSize: 2.
+	runner poolMaxSize: maxConcurrentProcesses.
 	runner start.
 	completionSemaphore := Semaphore new.
 	basePortNumber := 13000.
@@ -138,6 +140,18 @@ DPTaskManager >> isRunning [
 DPTaskManager >> isSuccess [
 
 	^ processors isNotNil and: [ processors allSatisfy: #isSuccess ]
+]
+
+{ #category : #accessing }
+DPTaskManager >> maxConcurrentProcesses [
+	^ maxConcurrentProcesses
+]
+
+{ #category : #accessing }
+DPTaskManager >> maxConcurrentProcesses: anInteger [
+
+	maxConcurrentProcesses := anInteger.
+	self runner maxPoolSize: maxConcurrentProcesses.
 ]
 
 { #category : #private }
@@ -207,6 +221,7 @@ DPTaskManager >> run [
 	portNumber := basePortNumber.
 	1 to: processorCount do: [ :i |
 		processor := DPTaskProcessor new 
+			"image: 'mgb.image';"
 			portNumber: portNumber;
 			command: (self commandFor: i of: processorCount).
 		processor runIn: self.

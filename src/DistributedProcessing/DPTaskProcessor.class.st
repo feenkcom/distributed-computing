@@ -22,6 +22,7 @@ Class {
 	#name : #DPTaskProcessor,
 	#superclass : #Object,
 	#instVars : [
+		'image',
 		'host',
 		'portNumber',
 		'application',
@@ -67,6 +68,16 @@ DPTaskProcessor >> host [
 { #category : #accessing }
 DPTaskProcessor >> host: anObject [
 	host := anObject
+]
+
+{ #category : #accessing }
+DPTaskProcessor >> image [
+	^ image
+]
+
+{ #category : #accessing }
+DPTaskProcessor >> image: anObject [
+	image := anObject asFileReference
 ]
 
 { #category : #testing }
@@ -169,7 +180,7 @@ DPTaskProcessor >> value [
 		debugMode: true;
 		clientSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber);
 		serverSocketAddress: (LanguageLinkSocketAddress ipOrName: self host port: self portNumber + 1000);
-		serverImage: 'ExtnDictionary.image' asFileReference.
+		serverImage: image.
 	application := PharoLinkApplication newWith: settings.
 	application start.
 	haveError := false.
