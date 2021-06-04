@@ -13,15 +13,15 @@ The final record contains the sum of all the previous random values (to facilita
 
 To produce a file and answer the file name: 
 
-[[[
+```
 file := DPSampleLargeCSVExample new 
 	fileSize: (2.5 * (1024 ** 2));
 	create
-]]]
+```
 
 to process the resulting file:
 
-[[[
+```
 mgr := DPMapReduceSimpleManager new
 	processorClass: DPSumLargeCSVExample;
 	reducerClass: DPReduceLargeCSVExample;
@@ -29,15 +29,15 @@ mgr := DPMapReduceSimpleManager new
 	fileSpec: (DPInputFileWithRangeSpec new
 		filename: file);
 	run.
-]]]
+```
 
 to wait for completion and retrieve the result:
 
-[[[
+```
 mgr
 	waitForCompletion;
 	result.
-]]]
+```
 
 "
 Class {

@@ -4,9 +4,9 @@ A DPMapReduceSimpleProcessor is created by DPMapReduceSimpleManager for each ext
 DPMapReduceSimpleProcessor is responsible for starting and stopping a PharoLinkApplication server and running the task in the server.
 
  
-!!Internal Representation and Key Implementation Points.
+## Internal Representation and Key Implementation Points.
 
-!!!Instance Variables
+### Instance Variables
 
 	application:		<PharoLinkApplication>
 	command:			<String>
@@ -16,7 +16,8 @@ DPMapReduceSimpleProcessor is responsible for starting and stopping a PharoLinkA
 	result:			<Object | Error>
 
 
-!!!Implementation Points
+### Implementation Points
+
 "
 Class {
 	#name : #DPTaskProcessor,

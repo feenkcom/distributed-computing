@@ -12,14 +12,15 @@ Public API and Key Messages
 
 See DPReduceLargeCSVExample for an example implementation
  
-!!Internal Representation and Key Implementation Points.
+## Internal Representation and Key Implementation Points.
 
-!!!Instance Variables
+### Instance Variables
 	mappedValues:	<Array>
 	result:			<Object>
 
 
-!!!Implementation Points
+### Implementation Points
+
 "
 Class {
 	#name : #DPAbstractReducer,

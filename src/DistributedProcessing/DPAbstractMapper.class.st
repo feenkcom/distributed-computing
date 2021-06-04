@@ -5,7 +5,7 @@ Subclasses are typically initialised with the information required to process th
 
 See DPSumLargeCSVExample as an example.
 
-!!Public API and Key Messages
+## Public API and Key Messages
 
 - map 			Process the receiver's data and answer the result as a JSON encodable object
 - mapToSton 	Process the receiver's data and answer the result as a STON encodable object

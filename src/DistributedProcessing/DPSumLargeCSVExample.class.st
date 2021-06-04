@@ -3,6 +3,7 @@ DPSumLargeCSVExample processes the supplied records and calculates the total of 
 
 See DPLargeCSVExample for the record format and how to run the example.  The value is decoded using the format specified in the second column and value in the third column.  It is then validated using the value in the fourth column.  (All of this is just to simulate some actual processing).
 
+
 "
 Class {
 	#name : #DPSumLargeCSVExample,

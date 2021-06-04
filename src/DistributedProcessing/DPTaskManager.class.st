@@ -7,27 +7,27 @@ The elapsed run time is measured.  Once the receiver #isFinished, it can be retr
 
 To run the supplied CSV example (after producing the source data):
 
-[[[ 
+``` 
 mgr := DPMapReduceSimpleManager new
 	processorClass: DPSumLargeCSV;
 	reducerClass: DPReduceLargeCSV;
 	processorCount: 8;
 	file: 'input.csv';
 	run.
-]]]
+```
 
 To wait for the operation to complete, and return the results: 
 
-[[[
+```
 mgr 
 	waitForCompletion;
 	result.
-]]]
+```
 
 
-!!Internal Representation and Key Implementation Points.
+## Internal Representation and Key Implementation Points.
 
-!!!Instance Variables
+### Instance Variables
 
 	basePortNumber:			<Integer>
 	completionSemaphore:	<Semaphore>
@@ -42,7 +42,8 @@ mgr
 	startTime:				<DateAndTime>
 
 
-!!!Implementation Points
+### Implementation Points
+
 "
 Class {
 	#name : #DPTaskManager,
